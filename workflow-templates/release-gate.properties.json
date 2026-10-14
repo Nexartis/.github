@@ -1,0 +1,6 @@
+{
+  "name": "Nexartis release-gate",
+  "description": "Required aggregator check with a false-green guard.",
+  "iconName": "octicon check-circle",
+  "categories": ["Continuous integration"]
+}

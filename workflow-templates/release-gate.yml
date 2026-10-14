@@ -1,0 +1,29 @@
+name: Nexartis release-gate
+
+on:
+  pull_request:
+    branches: [dev, prod]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run validate
+
+  release-gate:
+    if: always()
+    needs: [verify]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assert every required job succeeded
+        run: |
+          result="${{ needs.verify.result }}"
+          echo "verify=$result"
+          [ "$result" = "success" ] || { echo "release-gate FAILED"; exit 1; }
+          echo "release-gate PASSED"
